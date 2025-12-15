@@ -39,16 +39,7 @@ module.exports = allowCors(async (req, res) => {
     }
 
     // PUT actualizar vehículo
-    if (req.method === 'PUT') {
-      const { id, name } = req.body;
-    
-      await db.query(
-        'UPDATE vehicles SET name=? WHERE id=?',
-        [name, id]
-      );
-    
-      return res.status(200).json({ message: 'Vehículo actualizado' });
-    }
+    if (req.method === 'PUT') { const { id, name, model, image_url, class_id } = req.body; await db.query( 'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=? WHERE id=?', [name, model, image_url, class_id, id] ); return res.status(200).json({ message: 'Vehículo actualizado' }); }
 
     // DELETE vehículo
     if (req.method === 'DELETE') {
@@ -64,4 +55,5 @@ module.exports = allowCors(async (req, res) => {
     res.status(500).json({ error: 'Error BD' });
   }
 });
+
 
