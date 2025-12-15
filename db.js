@@ -2,8 +2,8 @@ const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
   host: '87.235.119.243',      // TU IP PÚBLICA
-  user: 'root',
-  password: '',
+  user: 'apiuser',
+  password: 'tucontraseña',
   database: 'sahp_driving',
   port: 3306,
   waitForConnections: true,
@@ -11,3 +11,4 @@ const pool = mysql.createPool({
 });
 
 module.exports = pool;
+
