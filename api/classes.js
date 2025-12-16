@@ -24,7 +24,18 @@ module.exports = async (req, res) => {
 
   try {
     if (req.method === 'GET') {
-      const [rows] = await db.query('SELECT * FROM classes');
+      const [rows] = await db.query(`
+        SELECT 
+          c.id,
+          c.name,
+          c.description,
+          COUNT(v.id) AS vehicle_count
+        FROM classes c
+        LEFT JOIN vehicles v ON v.class_id = c.id
+        GROUP BY c.id
+        ORDER BY c.id
+      `);
+    
       return res.status(200).json(rows);
     }
 
@@ -43,3 +54,4 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: 'Error BD' });
   }
 };
+
