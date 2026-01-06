@@ -2,8 +2,20 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-module.exports = async (req, res) => {
+// Middleware CORS
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // permitir cualquier origen
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  return await fn(req, res);
+};
+
+module.exports = allowCors(async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Método no permitido' });
   }
@@ -15,6 +27,7 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // Buscar usuario en BD
     const [rows] = await db.query(
       'SELECT * FROM users WHERE username = ?',
       [username]
@@ -26,15 +39,17 @@ module.exports = async (req, res) => {
 
     const user = rows[0];
 
+    // Comprobar contraseña
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
 
+    // Crear token JWT
     const token = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'MI_SECRET_KEY',
       { expiresIn: '2h' }
     );
 
@@ -44,4 +59,4 @@ module.exports = async (req, res) => {
     console.error(err);
     return res.status(500).json({ message: 'Error del servidor' });
   }
-};
+});
