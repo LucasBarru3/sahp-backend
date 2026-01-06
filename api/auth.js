@@ -49,7 +49,7 @@ module.exports = allowCors(async (req, res) => {
     // Crear token JWT
     const token = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET || 'MI_SECRET_KEY',
+      process.env.JWT_SECRET || 'sahp_gang_key',
       { expiresIn: '2h' }
     );
 
