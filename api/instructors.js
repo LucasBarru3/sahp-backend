@@ -4,8 +4,8 @@ const Cors = require('cors');
 // Configuración de CORS
 const cors = Cors({
   origin: 'https://sahp-frontend.vercel.app', // tu frontend en Vercel
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
 // Helper para usar CORS con async/await
@@ -23,6 +23,7 @@ module.exports = async (req, res) => {
   await runMiddleware(req, res, cors);
 
   try {
+    // GET todos los instructores
     if (req.method === 'GET') {
       const [rows] = await db.query(`
         SELECT 
@@ -36,12 +37,12 @@ module.exports = async (req, res) => {
           COUNT(*) OVER () AS instructor_count
         FROM instructors i
       `);
-    
       return res.status(200).json(rows);
     }
 
+    // DELETE instructor
     if (req.method === 'DELETE') {
-      const { state_id } = req.query; // ✅ req.query existe en serverless
+      const { state_id } = req.query;
 
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
@@ -55,24 +56,46 @@ module.exports = async (req, res) => {
       return res.status(200).json({ message: 'Instructor eliminado' });
     }
 
+    // POST nuevo instructor
     if (req.method === 'POST') {
-      const {
-        nombre,
-        apellidos,
-        rango_sahp,
-        fecha_nacimiento,
-        telefono,
-        foto
-      } = req.body;
+      const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto } = req.body;
+
+      if (!nombre || !apellidos) {
+        return res.status(400).json({ error: 'Faltan datos obligatorios' });
+      }
 
       await db.query(
         `INSERT INTO instructors 
-        (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto)
-        VALUES (?, ?, ?, ?, ?, ?)`,
+          (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto)
+          VALUES (?, ?, ?, ?, ?, ?)`,
         [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto]
       );
 
       return res.status(201).json({ message: 'Instructor creado' });
+    }
+
+    // PUT actualizar instructor existente
+    if (req.method === 'PUT') {
+      const { state_id } = req.query;
+      const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto } = req.body;
+
+      if (!state_id) {
+        return res.status(400).json({ error: 'Falta state_id' });
+      }
+
+      await db.query(
+        `UPDATE instructors SET
+          nombre = ?, 
+          apellidos = ?, 
+          rango_sahp = ?, 
+          fecha_nacimiento = ?, 
+          telefono = ?, 
+          foto = ?
+        WHERE state_id = ?`,
+        [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, state_id]
+      );
+
+      return res.status(200).json({ message: 'Instructor actualizado' });
     }
 
     res.status(405).json({ error: 'Método no permitido' });
@@ -81,4 +104,3 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: 'Error BD' });
   }
 };
-
