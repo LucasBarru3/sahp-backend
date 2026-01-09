@@ -41,11 +41,22 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'POST') {
-      const { name, description } = req.body;
+      const {
+        nombre,
+        apellidos,
+        rango_sahp,
+        fecha_nacimiento,
+        telefono,
+        foto
+      } = req.body;
+
       await db.query(
-        'INSERT INTO instructors (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto) VALUES (?, ?, ?, ?, ?, ?)',
-        [name, description]
+        `INSERT INTO instructors 
+        (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto)
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto]
       );
+
       return res.status(201).json({ message: 'Instructor creado' });
     }
 
