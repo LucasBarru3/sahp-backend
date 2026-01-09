@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     if (req.method === 'GET') {
       const [rows] = await db.query(`
         SELECT 
-          i.id_instructor,
+          i.state_id,
           i.nombre,
           i.apellidos,
           i.rango_sahp,
@@ -41,15 +41,15 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'DELETE') {
-      const { id_instructor } = req.query; // ✅ req.query existe en serverless
+      const { state_id } = req.query; // ✅ req.query existe en serverless
 
-      if (!id_instructor) {
-        return res.status(400).json({ error: 'Falta id_instructor' });
+      if (!state_id) {
+        return res.status(400).json({ error: 'Falta state_id' });
       }
 
       await db.query(
-        'DELETE FROM instructors WHERE id_instructor = ?',
-        [id_instructor]
+        'DELETE FROM instructors WHERE state_id = ?',
+        [state_id]
       );
 
       return res.status(200).json({ message: 'Instructor eliminado' });
