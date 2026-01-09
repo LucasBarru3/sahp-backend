@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
           i.fecha_nacimiento,
           i.telefono,
           i.foto,
-          COUNT(i.id_instructor) AS instructor_count
+          COUNT(*) OVER () AS instructor_count
         FROM instructors i
       `);
     
