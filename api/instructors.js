@@ -1,28 +1,21 @@
 const db = require('../db');
-const Cors = require('cors');
 
-// Configuración de CORS
-const cors = Cors({
-  origin: 'https://sahp-frontend.vercel.app', // tu frontend en Vercel
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-});
+// Helper CORS compatible con Vercel
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://sahp-frontend.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-// Helper para usar CORS con async/await
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) reject(result);
-      resolve(result);
-    });
-  });
-}
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-module.exports = async (req, res) => {
-  // Ejecutamos CORS antes de cualquier cosa
-  await runMiddleware(req, res, cors);
+  return await fn(req, res);
+};
 
+module.exports = allowCors(async (req, res) => {
   try {
+
     if (req.method === 'GET') {
       const [rows] = await db.query(`
         SELECT 
@@ -36,23 +29,8 @@ module.exports = async (req, res) => {
           COUNT(*) OVER () AS instructor_count
         FROM instructors i
       `);
-    
+
       return res.status(200).json(rows);
-    }
-
-    if (req.method === 'DELETE') {
-      const { id_instructor } = req.query; // ✅ req.query existe en serverless
-
-      if (!id_instructor) {
-        return res.status(400).json({ error: 'Falta id_instructor' });
-      }
-
-      await db.query(
-        'DELETE FROM instructors WHERE id_instructor = ?',
-        [id_instructor]
-      );
-
-      return res.status(200).json({ message: 'Instructor eliminado' });
     }
 
     if (req.method === 'POST') {
@@ -75,10 +53,25 @@ module.exports = async (req, res) => {
       return res.status(201).json({ message: 'Instructor creado' });
     }
 
-    res.status(405).json({ error: 'Método no permitido' });
+    if (req.method === 'DELETE') {
+      const { id_instructor } = req.query;
+
+      if (!id_instructor) {
+        return res.status(400).json({ error: 'Falta id_instructor' });
+      }
+
+      await db.query(
+        'DELETE FROM instructors WHERE id_instructor = ?',
+        [id_instructor]
+      );
+
+      return res.status(200).json({ message: 'Instructor eliminado' });
+    }
+
+    return res.status(405).json({ error: 'Método no permitido' });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error BD' });
+    return res.status(500).json({ error: 'Error BD' });
   }
-};
-
+});
