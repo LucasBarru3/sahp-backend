@@ -40,6 +40,21 @@ module.exports = async (req, res) => {
       return res.status(200).json(rows);
     }
 
+    if (req.method === 'DELETE') {
+      const { id_instructor } = req.query; // ✅ req.query existe en serverless
+
+      if (!id_instructor) {
+        return res.status(400).json({ error: 'Falta id_instructor' });
+      }
+
+      await db.query(
+        'DELETE FROM instructors WHERE id_instructor = ?',
+        [id_instructor]
+      );
+
+      return res.status(200).json({ message: 'Instructor eliminado' });
+    }
+
     if (req.method === 'POST') {
       const {
         nombre,
