@@ -34,6 +34,7 @@ module.exports = async (req, res) => {
           i.fecha_nacimiento,
           i.telefono,
           i.foto,
+          i.num_placa,
           COUNT(*) OVER () AS instructor_count
         FROM instructors i
       `);
@@ -58,7 +59,7 @@ module.exports = async (req, res) => {
 
     // POST nuevo instructor
     if (req.method === 'POST') {
-      const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto } = req.body;
+      const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa } = req.body;
 
       if (!nombre || !apellidos) {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -66,9 +67,9 @@ module.exports = async (req, res) => {
 
       await db.query(
         `INSERT INTO instructors 
-          (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto)
-          VALUES (?, ?, ?, ?, ?, ?)`,
-        [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto]
+          (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa]
       );
 
       return res.status(201).json({ message: 'Instructor creado' });
@@ -77,7 +78,7 @@ module.exports = async (req, res) => {
     // PUT actualizar instructor existente
     if (req.method === 'PUT') {
       const { state_id } = req.query;
-      const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto } = req.body;
+      const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa } = req.body;
 
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
@@ -88,11 +89,12 @@ module.exports = async (req, res) => {
           nombre = ?, 
           apellidos = ?, 
           rango_sahp = ?, 
+          num_placa = ?,
           fecha_nacimiento = ?, 
           telefono = ?, 
           foto = ?
         WHERE state_id = ?`,
-        [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, state_id]
+        [nombre, apellidos, rango_sahp, num_placa, fecha_nacimiento, telefono, foto, state_id]
       );
 
       return res.status(200).json({ message: 'Instructor actualizado' });
