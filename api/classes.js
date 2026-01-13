@@ -3,8 +3,8 @@ const Cors = require('cors');
 
 // Configuración de CORS
 const cors = Cors({
-  origin: 'https://sahp-frontend.vercel.app', // tu frontend en Vercel
-  methods: ['GET', 'POST'],
+  origin: 'https://sahp-frontend.vercel.app',
+  methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 });
 
@@ -19,10 +19,10 @@ function runMiddleware(req, res, fn) {
 }
 
 module.exports = async (req, res) => {
-  // Ejecutamos CORS antes de cualquier cosa
   await runMiddleware(req, res, cors);
 
   try {
+    // ===== GET =====
     if (req.method === 'GET') {
       const [rows] = await db.query(`
         SELECT 
@@ -35,17 +35,63 @@ module.exports = async (req, res) => {
         GROUP BY c.id
         ORDER BY c.id
       `);
-    
+
       return res.status(200).json(rows);
     }
 
+    // ===== POST =====
     if (req.method === 'POST') {
       const { name, description } = req.body;
+
+      if (!name) {
+        return res.status(400).json({ error: 'El nombre es obligatorio' });
+      }
+
       await db.query(
         'INSERT INTO classes (name, description) VALUES (?, ?)',
         [name, description]
       );
+
       return res.status(201).json({ message: 'Clase creada' });
+    }
+
+    // ===== DELETE =====
+    if (req.method === 'DELETE') {
+      const { id } = req.query;
+
+      if (!id) {
+        return res.status(400).json({ error: 'Falta id de la clase' });
+      }
+
+      // Comprobar si la clase existe
+      const [[existing]] = await db.query(
+        'SELECT id FROM classes WHERE id = ?',
+        [id]
+      );
+
+      if (!existing) {
+        return res.status(404).json({ error: 'Clase no encontrada' });
+      }
+
+      // Comprobar si tiene vehículos asociados
+      const [[count]] = await db.query(
+        'SELECT COUNT(*) AS total FROM vehicles WHERE class_id = ?',
+        [id]
+      );
+
+      if (count.total > 0) {
+        return res.status(409).json({
+          error: 'No se puede eliminar una clase con vehículos asignados',
+        });
+      }
+
+      // Eliminar clase
+      await db.query(
+        'DELETE FROM classes WHERE id = ?',
+        [id]
+      );
+
+      return res.status(200).json({ message: 'Clase eliminada' });
     }
 
     res.status(405).json({ error: 'Método no permitido' });
@@ -54,4 +100,3 @@ module.exports = async (req, res) => {
     res.status(500).json({ error: 'Error BD' });
   }
 };
-
