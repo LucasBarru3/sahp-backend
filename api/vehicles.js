@@ -30,16 +30,16 @@ module.exports = allowCors(async (req, res) => {
 
     // POST crear vehículo
     if (req.method === 'POST') {
-      const { name, model, image_url, class_id, follow_class, note } = req.body;
+      const { name, model, image_url, class_id, follow_class, tuned, note } = req.body;
       await db.query(
-        'INSERT INTO vehicles (name, model, image_url, class_id, follow_class, note) VALUES (?, ?, ?, ?, ?, ?)',
-        [name, model, image_url, class_id, follow_class, note]
+        'INSERT INTO vehicles (name, model, image_url, class_id, follow_class, tuned, note) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [name, model, image_url, class_id, follow_class, tuned, note]
       );
       return res.status(201).json({ message: 'Vehículo creado' });
     }
 
     // PUT actualizar vehículo
-    if (req.method === 'PUT') { const { id, name, model, image_url, class_id, follow_class, note } = req.body; await db.query( 'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=?, follow_class=?, note=? WHERE id=?', [name, model, image_url, class_id, follow_class, note, id] ); return res.status(200).json({ message: 'Vehículo actualizado' }); }
+    if (req.method === 'PUT') { const { id, name, model, image_url, class_id, follow_class, tuned, note } = req.body; await db.query( 'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=?, follow_class=?, tuned=?, note=? WHERE id=?', [name, model, image_url, class_id, follow_class, tuned, note, id] ); return res.status(200).json({ message: 'Vehículo actualizado' }); }
 
     // DELETE vehículo
     if (req.method === 'DELETE') {
