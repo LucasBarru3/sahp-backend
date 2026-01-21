@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
           i.description,
           i.required,
           i.exempt,
-          i.active,
+          i.active
         FROM licenses i
       `);
       return res.status(200).json(rows);
