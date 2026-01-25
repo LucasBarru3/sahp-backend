@@ -3,7 +3,7 @@ const Cors = require('cors');
 
 // Configuración de CORS
 const cors = Cors({
-  origin: 'https://sahp-frontend.vercel.app',
+  origin: 'https://sahp-fam.vercel.app',
   methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type'],
 });
