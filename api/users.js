@@ -30,7 +30,6 @@ module.exports = async (req, res) => {
         SELECT 
           u.id,
           u.username,
-          u.password,
           u.created_at
         FROM users u
       `);
