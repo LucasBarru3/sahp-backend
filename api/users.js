@@ -1,5 +1,6 @@
 const db = require('../db');
 const Cors = require('cors');
+const bcrypt = require('bcryptjs');
 
 // Configuración de CORS
 const cors = Cors({
@@ -52,7 +53,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ message: 'Usuario eliminado' });
     }
 
-    // POST nuevo instructor
+    // POST nuevo usuario
     if (req.method === 'POST') {
       const { username, password } = req.body;
 
@@ -60,17 +61,20 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
       }
 
+      // 🔐 HASHEAR PASSWORD
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       await db.query(
-        `INSERT INTO users 
-          (username, password)
-          VALUES (?, ?)`,
-        [username, password]
+        `INSERT INTO users (username, password)
+        VALUES (?, ?)`,
+        [username, hashedPassword]
       );
 
       return res.status(201).json({ message: 'Usuario creado' });
     }
 
-    // PUT actualizar instructor existente
+
+    // PUT actualizar usuario
     if (req.method === 'PUT') {
       const { id } = req.query;
       const { username, password } = req.body;
@@ -79,13 +83,19 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Falta id' });
       }
 
-      await db.query(
-        `UPDATE users SET
-          username = ?, 
-          password = ?
-        WHERE id = ?`,
-        [username, password, id]
-      );
+      let query = 'UPDATE users SET username = ?';
+      let values = [username];
+
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        query += ', password = ?';
+        values.push(hashedPassword);
+      }
+
+      query += ' WHERE id = ?';
+      values.push(id);
+
+      await db.query(query, values);
 
       return res.status(200).json({ message: 'Usuario actualizado' });
     }
