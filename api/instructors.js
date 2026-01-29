@@ -1,6 +1,6 @@
 const db = require('../db');
 const Cors = require('cors');
-const { verifyToken } = require('../middlewares/auth');
+const { verifyToken } = require('./middlewares/auth');
 
 // Configuración de CORS
 const cors = Cors({
