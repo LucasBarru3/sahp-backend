@@ -1,5 +1,6 @@
 const db = require('../db');
 const Cors = require('cors');
+const { verifyToken } = require('../middlewares/auth');
 
 // Configuración de CORS
 const cors = Cors({
@@ -41,6 +42,11 @@ module.exports = async (req, res) => {
 
     // ===== POST =====
     if (req.method === 'POST') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { name, description } = req.body;
 
       if (!name) {
@@ -57,6 +63,11 @@ module.exports = async (req, res) => {
 
     // ===== DELETE =====
     if (req.method === 'DELETE') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { id } = req.query;
 
       if (!id) {

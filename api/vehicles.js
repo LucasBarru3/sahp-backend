@@ -1,6 +1,6 @@
 const db = require('../db');
 const cors = require('cors');
-
+const { verifyToken } = require('../middlewares/auth');
 // Middleware CORS
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*'); // permite todas las peticiones
@@ -30,6 +30,11 @@ module.exports = allowCors(async (req, res) => {
 
     // POST crear vehículo
     if (req.method === 'POST') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { name, model, image_url, class_id, follow_class, tuned, note } = req.body;
       await db.query(
         'INSERT INTO vehicles (name, model, image_url, class_id, follow_class, tuned, note) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -39,10 +44,21 @@ module.exports = allowCors(async (req, res) => {
     }
 
     // PUT actualizar vehículo
-    if (req.method === 'PUT') { const { id, name, model, image_url, class_id, follow_class, tuned, note } = req.body; await db.query( 'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=?, follow_class=?, tuned=?, note=? WHERE id=?', [name, model, image_url, class_id, follow_class, tuned, note, id] ); return res.status(200).json({ message: 'Vehículo actualizado' }); }
+    if (req.method === 'PUT') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
+    const { id, name, model, image_url, class_id, follow_class, tuned, note } = req.body; await db.query( 'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=?, follow_class=?, tuned=?, note=? WHERE id=?', [name, model, image_url, class_id, follow_class, tuned, note, id] ); return res.status(200).json({ message: 'Vehículo actualizado' }); }
 
     // DELETE vehículo
     if (req.method === 'DELETE') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { id } = req.body;
       await db.query('DELETE FROM vehicles WHERE id=?', [id]);
       return res.status(200).json({ message: 'Vehículo eliminado' });

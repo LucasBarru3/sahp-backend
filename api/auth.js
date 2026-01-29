@@ -16,16 +16,6 @@ const allowCors = fn => async (req, res) => {
 };
 
 module.exports = allowCors(async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Método no permitido' });
-  }
-
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Faltan datos' });
-  }
-
   try {
     // Buscar usuario en BD
     const [rows] = await db.query(
@@ -48,10 +38,15 @@ module.exports = allowCors(async (req, res) => {
 
     // Crear token JWT
     const token = jwt.sign(
-      { id: user.id, username: user.username },
+      {
+        id: user.id,
+        username: user.username,
+        isAdmin: user.is_admin === 1
+      },
       process.env.JWT_SECRET || 'sahp_gang_key',
       { expiresIn: '2h' }
     );
+
 
     return res.status(200).json({ token });
 

@@ -1,5 +1,6 @@
 const db = require('../db');
 const Cors = require('cors');
+const { verifyToken } = require('../middlewares/auth');
 
 // Configuración de CORS
 const cors = Cors({
@@ -43,6 +44,11 @@ module.exports = async (req, res) => {
 
     // DELETE instructor
     if (req.method === 'DELETE') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { state_id } = req.query;
 
       if (!state_id) {
@@ -59,6 +65,11 @@ module.exports = async (req, res) => {
 
     // POST nuevo instructor
     if (req.method === 'POST') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa } = req.body;
 
       if (!nombre || !apellidos) {
@@ -77,6 +88,11 @@ module.exports = async (req, res) => {
 
     // PUT actualizar instructor existente
     if (req.method === 'PUT') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { state_id } = req.query;
       const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa } = req.body;
 

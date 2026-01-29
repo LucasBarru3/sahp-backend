@@ -1,6 +1,6 @@
 const db = require('../db');
 const Cors = require('cors');
-
+const { verifyToken } = require('../middlewares/auth');
 // Configuración de CORS
 const cors = Cors({
   origin: 'https://sahp-fam.vercel.app', // tu frontend en Vercel
@@ -42,6 +42,11 @@ module.exports = async (req, res) => {
 
     // DELETE instructor
     if (req.method === 'DELETE') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { id } = req.query;
 
       if (!id) {
@@ -58,6 +63,11 @@ module.exports = async (req, res) => {
 
     // POST nueva licencia
     if (req.method === 'POST') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { name, image_url, title, description, required, exempt, active } = req.body;
 
       if (!name || !image_url || !title || !description || !required || !exempt || active === undefined) {
@@ -76,6 +86,11 @@ module.exports = async (req, res) => {
 
     // PUT actualizar instructor existente
     if (req.method === 'PUT') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const { id } = req.query;
       const { name, image_url, title, description, required, exempt, active } = req.body;
 
