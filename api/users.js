@@ -1,7 +1,7 @@
 const db = require('../db');
 const Cors = require('cors');
 const bcrypt = require('bcryptjs');
-const { verifyToken } = require('./middlewares/auth');
+const { verifyToken } = require('./middleware/auth');
 // Configuración de CORS
 const cors = Cors({
   origin: 'https://sahp-fam.vercel.app', // tu frontend en Vercel
