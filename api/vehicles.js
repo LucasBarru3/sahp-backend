@@ -3,14 +3,14 @@ const cors = require('cors');
 const { verifyToken } = require('./middleware/auth');
 // Middleware CORS
 const allowCors = fn => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Permite todas las solicitudes (o puedes restringir a tu dominio)
+  res.setHeader('Access-Control-Allow-Origin', '*'); // O restringe a tu dominio, por ejemplo: 'https://sahp-fam.vercel.app'
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    // Responde a la preflight con las cabeceras correctas
+    res.status(200).end();
+    return;
   }
-
   return await fn(req, res);
 };
 
