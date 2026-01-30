@@ -6,7 +6,7 @@ const { verifyToken } = require('./middleware/auth');
 const cors = Cors({
   origin: 'https://sahp-fam.vercel.app',
   methods: ['GET', 'POST', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
 // Helper para usar CORS con async/await

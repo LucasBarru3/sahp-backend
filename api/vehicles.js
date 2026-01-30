@@ -3,9 +3,9 @@ const cors = require('cors');
 const { verifyToken } = require('./middleware/auth');
 // Middleware CORS
 const allowCors = fn => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // permite todas las peticiones
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Permite todas las solicitudes (o puedes restringir a tu dominio)
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
