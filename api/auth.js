@@ -16,13 +16,21 @@ const allowCors = fn => async (req, res) => {
 };
 
 module.exports = allowCors(async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Método no permitido' });
+  }
+
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Faltan datos' });
+  }
   try {
     // Buscar usuario en BD
     const [rows] = await db.query(
       'SELECT * FROM users WHERE username = ?',
       [username]
     );
-
     if (rows.length === 0) {
       return res.status(401).json({ message: 'Usuario incorrecto' });
     }
