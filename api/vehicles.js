@@ -56,7 +56,16 @@ module.exports = allowCors(async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-    const { id, name, model, image_url, class_id, follow_class, tuned, note } = req.body; await db.query( 'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=?, follow_class=?, tuned=?, note=? WHERE id=?', [name, model, image_url, class_id, follow_class, tuned, note, id] ); return res.status(200).json({ message: 'Vehículo actualizado' }); }
+      const { id, name, model, image_url, class_id, follow_class, tuned, note } = req.body;
+      const logEntry = { id, name, model, image_url, class_id, follow_class, tuned, note };
+      await db.query( 
+        'UPDATE vehicles SET name=?, model=?, image_url=?, class_id=?, follow_class=?, tuned=?, note=? WHERE id=?', 
+        [name, model, image_url, class_id, follow_class, tuned, note, id] );
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['vehicle', 'update', JSON.stringify(logEntry), user.id]
+      ); 
+      return res.status(200).json({ message: 'Vehículo actualizado' }); }
 
     // DELETE vehículo
     if (req.method === 'DELETE') {
