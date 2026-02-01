@@ -3,7 +3,7 @@ const cors = require('cors');
 const winston = require('winston');
 const vehicleLogger = winston.createLogger({
   transports: [
-    new winston.transports.File({ filename: './logs/vehicles.log' })
+    new winston.transports.File({ filename: 'vehicles.log' })
   ]
 });
 const { verifyToken } = require('./middleware/auth');
