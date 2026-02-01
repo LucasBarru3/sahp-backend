@@ -46,6 +46,7 @@ module.exports = allowCors(async (req, res) => {
         'INSERT INTO vehicles (name, model, image_url, class_id, follow_class, tuned, note) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [name, model, image_url, class_id, follow_class, tuned, note]
       );
+      console.log('Vehículo creado:', name);
       vehicleLogger.info('Vehículo creado', { name, model, image_url, class_id, follow_class, tuned, note });
       return res.status(201).json({ message: 'Vehículo creado' });
     }
