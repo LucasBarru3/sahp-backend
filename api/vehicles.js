@@ -36,23 +36,15 @@ module.exports = allowCors(async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const { name, model, image_url, class_id, follow_class, tuned, note, user_id } = req.body;
-      const logEntry = {
-        name,
-        model,
-        image_url,
-        class_id,
-        follow_class,
-        tuned,
-        note,
-      };
+      const { name, model, image_url, class_id, follow_class, tuned, note } = req.body;
+      const logEntry = { name, model, image_url, class_id, follow_class, tuned, note };
       await db.query(
         'INSERT INTO vehicles (name, model, image_url, class_id, follow_class, tuned, note) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [name, model, image_url, class_id, follow_class, tuned, note]
       );
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['vehicle', 'create', JSON.stringify(logEntry), user_id]
+        ['vehicle', 'create', JSON.stringify(logEntry), user.id]
       );
       return res.status(201).json({ message: 'Vehículo creado' });
     }
