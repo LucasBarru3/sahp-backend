@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
   await runMiddleware(req, res, cors);
 
   try {
-    // GET todos los instructores
+    // GET todos los logs
     if (req.method === 'GET') {
       const [rows] = await db.query(`
         SELECT 

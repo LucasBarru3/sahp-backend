@@ -74,8 +74,13 @@ module.exports = allowCors(async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const { id } = req.body;
+      const { id, name, model, image_url, class_id, follow_class, tuned, note } = req.body;
+      const logEntry = { id, name, model, image_url, class_id, follow_class, tuned, note };
       await db.query('DELETE FROM vehicles WHERE id=?', [id]);
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['vehicle', 'delete', JSON.stringify(logEntry), user.id]
+      ); 
       return res.status(200).json({ message: 'Vehículo eliminado' });
     }
 
