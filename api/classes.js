@@ -74,7 +74,7 @@ module.exports = async (req, res) => {
         return res.status(401).json({ error: 'No autorizado' });
       }
       const clase = req.body;
-      const id = clase.clase.id;
+      const id = clase?.clase?.id;
       console.log('Eliminando clase id:', id);
       if (!id) {
         return res.status(400).json({ error: 'Falta id de la clase' });
