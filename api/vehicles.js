@@ -1,6 +1,5 @@
 const db = require('../db');
 const cors = require('cors');
-const winston = require('winston');
 const { verifyToken } = require('./middleware/auth');
 // Middleware CORS
 const allowCors = fn => async (req, res) => {

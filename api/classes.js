@@ -58,6 +58,11 @@ module.exports = async (req, res) => {
         [name, description]
       );
 
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['class', 'create', JSON.stringify({name, description}), user.id]
+      );
+
       return res.status(201).json({ message: 'Clase creada' });
     }
 
@@ -68,7 +73,8 @@ module.exports = async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const { id } = req.query;
+      const clase = req.query;
+      const id = clase.id;
 
       if (!id) {
         return res.status(400).json({ error: 'Falta id de la clase' });
@@ -97,10 +103,11 @@ module.exports = async (req, res) => {
       }
 
       // Eliminar clase
-      await db.query(
-        'DELETE FROM classes WHERE id = ?',
-        [id]
-      );
+      console.log('Eliminando clase id:', id);
+      // await db.query(
+      //   'DELETE FROM classes WHERE id = ?',
+      //   [id]
+      // );
 
       return res.status(200).json({ message: 'Clase eliminada' });
     }
