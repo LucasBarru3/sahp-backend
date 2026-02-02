@@ -75,6 +75,7 @@ module.exports = async (req, res) => {
       }
       const clase = req.body;
       const id = clase?.id;
+      console.log('Eliminando clase id:', id);
       if (!id) {
         return res.status(400).json({ error: 'Falta id de la clase' });
       }
