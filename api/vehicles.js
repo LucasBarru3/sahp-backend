@@ -75,8 +75,8 @@ module.exports = allowCors(async (req, res) => {
         return res.status(401).json({ error: 'No autorizado' });
       }
       const vehicle = req.body; // Asegúrate que solo envíes { id: ... }
-      const id = vehicle.id;
-      console.log('Vehicle to delete:', vehicle);
+      const id = vehicle.vehicle.id;
+      console.log('Vehicle to delete:', vehicle.vehicle.id);
       // await db.query('DELETE FROM vehicles WHERE id=?', [id]);
       // await db.query(
       //   'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
