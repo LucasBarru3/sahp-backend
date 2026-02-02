@@ -75,7 +75,6 @@ module.exports = async (req, res) => {
       }
       const clase = req.body;
       const id = clase?.id;
-      console.log('Eliminando clase id:', id);
       if (!id) {
         return res.status(400).json({ error: 'Falta id de la clase' });
       }
@@ -110,7 +109,7 @@ module.exports = async (req, res) => {
 
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['class', 'delete', JSON.stringify({clase}), user.id]
+        ['class', 'delete', JSON.stringify(clase.clase), user.id]
       );
 
       return res.status(200).json({ message: 'Clase eliminada' });
