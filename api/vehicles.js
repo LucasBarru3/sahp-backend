@@ -76,12 +76,11 @@ module.exports = allowCors(async (req, res) => {
       }
       const vehicle = req.body; // Asegúrate que solo envíes { id: ... }
       const id = vehicle.vehicle.id;
-      console.log('Vehicle to delete:', vehicle.vehicle.id);
-      // await db.query('DELETE FROM vehicles WHERE id=?', [id]);
-      // await db.query(
-      //   'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-      //   ['vehicle', 'delete', JSON.stringify(vehicle), user.id]
-      // );
+      await db.query('DELETE FROM vehicles WHERE id=?', [id]);
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['vehicle', 'delete', JSON.stringify(vehicle.vehicle), user.id]
+      );
       return res.status(200).json({ message: 'Vehículo eliminado' });
     }
 
