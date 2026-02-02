@@ -103,11 +103,15 @@ module.exports = async (req, res) => {
       }
 
       // Eliminar clase
-      console.log('Eliminando clase id:', id);
-      // await db.query(
-      //   'DELETE FROM classes WHERE id = ?',
-      //   [id]
-      // );
+      await db.query(
+        'DELETE FROM classes WHERE id = ?',
+        [id]
+      );
+
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['class', 'delete', JSON.stringify({clase}), user.id]
+      );
 
       return res.status(200).json({ message: 'Clase eliminada' });
     }
