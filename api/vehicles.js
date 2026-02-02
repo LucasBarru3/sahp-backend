@@ -76,7 +76,7 @@ module.exports = allowCors(async (req, res) => {
       }
       const vehicle = req.body; // Asegúrate que solo envíes { id: ... }
       const id = vehicle.id;
-      console.log('Vehicle to delete:', vehicle.id);
+      console.log('Vehicle to delete:', vehicle);
       // await db.query('DELETE FROM vehicles WHERE id=?', [id]);
       // await db.query(
       //   'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
