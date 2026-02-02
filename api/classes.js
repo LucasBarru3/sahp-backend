@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const clase = req.query;
+      const clase = req.body;
       const id = clase.clase.id;
       console.log('Eliminando clase id:', id);
       if (!id) {
