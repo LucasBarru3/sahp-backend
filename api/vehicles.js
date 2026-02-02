@@ -74,7 +74,7 @@ module.exports = allowCors(async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const { vehicle } = req.body;
+      const vehicle = req.body;
       const id = vehicle.id;
       const logEntry = vehicle;
       await db.query('DELETE FROM vehicles WHERE id=?', [id]);
