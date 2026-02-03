@@ -62,10 +62,10 @@ module.exports = async (req, res) => {
       //   [state_id]
       // );
 
-      await db.query(
-        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['instructor', 'delete', JSON.stringify(data), user.id]
-      );
+      // await db.query(
+      //   'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+      //   ['instructor', 'delete', JSON.stringify(data), user.id]
+      // );
 
       return res.status(200).json({ message: 'Instructor eliminado' });
     }
