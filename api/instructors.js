@@ -1,6 +1,7 @@
 const db = require('../db');
 const Cors = require('cors');
 const { verifyToken } = require('./middleware/auth');
+const { log } = require('winston');
 
 // Configuración de CORS
 const cors = Cors({
@@ -50,14 +51,20 @@ module.exports = async (req, res) => {
         return res.status(401).json({ error: 'No autorizado' });
       }
       const { state_id } = req.query;
-
+      const data = req.body;
+      console.log('Eliminar instructor con state_id:', state_id, 'Datos:', data);
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
       }
 
+      // await db.query(
+      //   'DELETE FROM instructors WHERE state_id = ?',
+      //   [state_id]
+      // );
+
       await db.query(
-        'DELETE FROM instructors WHERE state_id = ?',
-        [state_id]
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['instructor', 'delete', JSON.stringify(data), user.id]
       );
 
       return res.status(200).json({ message: 'Instructor eliminado' });
@@ -71,7 +78,7 @@ module.exports = async (req, res) => {
         return res.status(401).json({ error: 'No autorizado' });
       }
       const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa } = req.body;
-
+      const logEntry = { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa };
       if (!nombre || !apellidos) {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
       }
@@ -81,6 +88,11 @@ module.exports = async (req, res) => {
           (nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa)
           VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa]
+      );
+
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['instructor', 'create', JSON.stringify(logEntry), user.id]
       );
 
       return res.status(201).json({ message: 'Instructor creado' });
@@ -95,7 +107,7 @@ module.exports = async (req, res) => {
       }
       const { state_id } = req.query;
       const { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa } = req.body;
-
+      const logEntry = { nombre, apellidos, rango_sahp, fecha_nacimiento, telefono, foto, num_placa };
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
       }
@@ -111,6 +123,11 @@ module.exports = async (req, res) => {
           foto = ?
         WHERE state_id = ?`,
         [nombre, apellidos, rango_sahp, num_placa, fecha_nacimiento, telefono, foto, state_id]
+      );
+
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['instructor', 'update', JSON.stringify(logEntry), user.id]
       );
 
       return res.status(200).json({ message: 'Instructor actualizado' });
