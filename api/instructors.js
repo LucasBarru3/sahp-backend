@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
       }
       const { state_id } = req.query;
       const data = req.body;
-      console.log('Eliminar instructor con state_id:', state_id, 'Datos:', data);
+      console.log('Eliminar instructor con state_id:', state_id, 'Datos:', data.data);
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
       }
