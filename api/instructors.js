@@ -52,20 +52,19 @@ module.exports = async (req, res) => {
       }
       const instructor = req.body;
       const state_id = instructor?.state_id;
-      console.log('Eliminar instructor con state_id:', state_id, 'Datos:', instructor);
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
       }
 
-      // await db.query(
-      //   'DELETE FROM instructors WHERE state_id = ?',
-      //   [state_id]
-      // );
+      await db.query(
+        'DELETE FROM instructors WHERE state_id = ?',
+        [state_id]
+      );
 
-      // await db.query(
-      //   'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-      //   ['instructor', 'delete', JSON.stringify(instructor), user.id]
-      // );
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['instructor', 'delete', JSON.stringify(instructor), user.id]
+      );
 
       return res.status(200).json({ message: 'Instructor eliminado' });
     }
