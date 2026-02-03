@@ -50,9 +50,9 @@ module.exports = async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const { state_id } = req.query;
-      const data = req.body;
-      console.log('Eliminar instructor con state_id:', state_id, 'Datos:', data.data);
+      const instructor = req.body;
+      const state_id = instructor?.state_id;
+      console.log('Eliminar instructor con state_id:', state_id, 'Datos:', instructor);
       if (!state_id) {
         return res.status(400).json({ error: 'Falta state_id' });
       }
@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
 
       // await db.query(
       //   'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-      //   ['instructor', 'delete', JSON.stringify(data), user.id]
+      //   ['instructor', 'delete', JSON.stringify(instructor), user.id]
       // );
 
       return res.status(200).json({ message: 'Instructor eliminado' });
