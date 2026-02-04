@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
 
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['class', 'create', JSON.stringify({name, description}), user.id]
+        ['Clase', 'Creación', JSON.stringify({name, description}), user.id]
       );
 
       return res.status(201).json({ message: 'Clase creada' });
@@ -110,7 +110,7 @@ module.exports = async (req, res) => {
 
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['class', 'delete', JSON.stringify(clase), user.id]
+        ['Clase', 'Eliminación', JSON.stringify(clase), user.id]
       );
 
       return res.status(200).json({ message: 'Clase eliminada' });

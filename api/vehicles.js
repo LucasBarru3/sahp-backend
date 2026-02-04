@@ -43,7 +43,7 @@ module.exports = allowCors(async (req, res) => {
       );
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['vehicle', 'create', JSON.stringify(logEntry), user.id]
+        ['Vehículo', 'Creación', JSON.stringify(logEntry), user.id]
       );
       return res.status(201).json({ message: 'Vehículo creado' });
     }
@@ -62,7 +62,7 @@ module.exports = allowCors(async (req, res) => {
         [name, model, image_url, class_id, follow_class, tuned, note, id] );
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['vehicle', 'update', JSON.stringify(logEntry), user.id]
+        ['Vehículo', 'Actualización', JSON.stringify(logEntry), user.id]
       ); 
       return res.status(200).json({ message: 'Vehículo actualizado' }); }
 
@@ -78,7 +78,7 @@ module.exports = allowCors(async (req, res) => {
       await db.query('DELETE FROM vehicles WHERE id=?', [id]);
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['vehicle', 'delete', JSON.stringify(vehicle.vehicle), user.id]
+        ['Vehículo', 'Eliminación', JSON.stringify(vehicle.vehicle), user.id]
       );
       return res.status(200).json({ message: 'Vehículo eliminado' });
     }

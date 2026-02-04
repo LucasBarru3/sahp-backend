@@ -47,8 +47,8 @@ module.exports = async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
-      const { id } = req.query;
-
+      const instructor = req.body;
+      const id = instructor?.id;
       if (!id) {
         return res.status(400).json({ error: 'Falta id' });
       }
@@ -56,6 +56,11 @@ module.exports = async (req, res) => {
       await db.query(
         'DELETE FROM licenses WHERE id = ?',
         [id]
+      );
+
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['Licencia', 'Eliminación', JSON.stringify(instructor), user.id]
       );
 
       return res.status(200).json({ message: 'Licencia eliminada' });
@@ -69,6 +74,7 @@ module.exports = async (req, res) => {
         return res.status(401).json({ error: 'No autorizado' });
       }
       const { name, image_url, title, description, required, exempt, active } = req.body;
+      const logEntry = { name, image_url, title, description, required, exempt, active };
 
       if (!name || !image_url || !title || !description || !required || !exempt || active === undefined) {
         return res.status(400).json({ error: 'Faltan datos obligatorios' });
@@ -79,6 +85,11 @@ module.exports = async (req, res) => {
           (name, image_url, title, description, required, exempt, active)
           VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [name, image_url, title, description, required, exempt, active]
+      );
+
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['Licencia', 'Creación', JSON.stringify(logEntry), user.id]
       );
 
       return res.status(201).json({ message: 'Licencia creada' });
@@ -93,7 +104,7 @@ module.exports = async (req, res) => {
       }
       const { id } = req.query;
       const { name, image_url, title, description, required, exempt, active } = req.body;
-
+      const logEntry = { id, name, image_url, title, description, required, exempt, active };
       if (!id) {
         return res.status(400).json({ error: 'Falta id' });
       }
@@ -109,6 +120,11 @@ module.exports = async (req, res) => {
           active = ?
         WHERE id = ?`,
         [name, image_url, title, description, required, exempt, active, id]
+      );
+
+      await db.query(
+        'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
+        ['Licencia', 'Actualización', JSON.stringify(logEntry), user.id]
       );
 
       return res.status(200).json({ message: 'Licencia actualizada' });

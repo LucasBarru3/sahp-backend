@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
 
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['instructor', 'delete', JSON.stringify(instructor), user.id]
+        ['Instructor', 'Eliminación', JSON.stringify(instructor), user.id]
       );
 
       return res.status(200).json({ message: 'Instructor eliminado' });
@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
 
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['instructor', 'create', JSON.stringify(logEntry), user.id]
+        ['Instructor', 'Creación', JSON.stringify(logEntry), user.id]
       );
 
       return res.status(201).json({ message: 'Instructor creado' });
@@ -126,7 +126,7 @@ module.exports = async (req, res) => {
 
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
-        ['instructor', 'update', JSON.stringify(logEntry), user.id]
+        ['Instructor', 'Actualización', JSON.stringify(logEntry), user.id]
       );
 
       return res.status(200).json({ message: 'Instructor actualizado' });
