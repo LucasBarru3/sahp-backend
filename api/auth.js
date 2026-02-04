@@ -49,7 +49,7 @@ module.exports = allowCors(async (req, res) => {
       {
         id: user.id,
         username: user.username,
-        isAdmin: user.is_admin === 1
+        isAdmin: user.is_admin
       },
       process.env.JWT_SECRET || 'sahp_gang_key',
       { expiresIn: '2h' }
