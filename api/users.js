@@ -26,6 +26,11 @@ module.exports = async (req, res) => {
   try {
     // GET todos los instructores
     if (req.method === 'GET') {
+      try {
+        user = verifyToken(req, res);
+      } catch {
+        return res.status(401).json({ error: 'No autorizado' });
+      }
       const [rows] = await db.query(`
         SELECT 
           u.id,
