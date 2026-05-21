@@ -35,16 +35,31 @@ module.exports = allowCors(async (req, res) => {
       } catch {
         return res.status(401).json({ error: 'No autorizado' });
       }
+
       const { name, model, image_url, class_id, follow_class, tuned, note } = req.body;
+
+      // 🔍 COMPROBAR SI YA EXISTE
+      const [existing] = await db.query(
+        'SELECT id FROM vehicles WHERE name = ? LIMIT 1',
+        [name]
+      );
+
+      if (existing.length > 0) {
+        return res.status(409).json({ error: 'El vehículo ya existe' });
+      }
+
       const logEntry = { name, model, image_url, class_id, follow_class, tuned, note };
+
       await db.query(
         'INSERT INTO vehicles (name, model, image_url, class_id, follow_class, tuned, note) VALUES (?, ?, ?, ?, ?, ?, ?)',
         [name, model, image_url, class_id, follow_class, tuned, note]
       );
+
       await db.query(
         'INSERT INTO logs (tipe, action, data, user_id) VALUES (?, ?, ?, ?)',
         ['Vehículo', 'Creación', JSON.stringify(logEntry), user.id]
       );
+
       return res.status(201).json({ message: 'Vehículo creado' });
     }
 
