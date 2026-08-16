@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
 
   try {
 
-    const steamId = 'xRocKGx';
+    const steamId = '76561198348047523';
 
     // 🔑 Pon aquí tu API Key de Steam
     const steamKey = process.env.STEAM_API_KEY;
