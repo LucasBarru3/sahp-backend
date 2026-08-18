@@ -25,9 +25,14 @@ module.exports = async (req, res) => {
 
   try {
 
-    const steamId = '76561199018962312';
+    const steamId = req.query.steamid;
 
-    // 🔑 Pon aquí tu API Key de Steam
+    if (!steamId) {
+      return res.status(400).json({
+        error: 'SteamID no proporcionado'
+      });
+    }
+
     const steamKey = process.env.STEAM_API_KEY;
 
     if (!steamKey) {
@@ -65,7 +70,6 @@ module.exports = async (req, res) => {
     const recentGames = gamesData?.response?.games || [];
 
     return res.status(200).json({
-
       success: true,
 
       player: {
@@ -73,18 +77,9 @@ module.exports = async (req, res) => {
         name: player.personaname,
         avatar: player.avatarfull,
         profile: player.profileurl,
-
-        // 0 = offline
-        // 1 = online
-        // 2 = ocupado
-        // 3 = ausente
-        // etc.
         state: player.personastate,
-
-        // Juego que está jugando AHORA
         playing: player.gameextrainfo || null,
 
-        // Último juego de los recientes
         lastGame: recentGames.length
           ? recentGames[0].name
           : null,
@@ -97,7 +92,6 @@ module.exports = async (req, res) => {
           ? recentGames[0].playtime_forever
           : 0
       }
-
     });
 
   } catch (err) {
